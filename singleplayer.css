@@ -1,0 +1,346 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    background-color: #f8f9fa;
+    color: #202122;
+    overflow: hidden;
+}
+
+.game-container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #fff;
+    border-right: 1px solid #a2a9b1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.target-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #0645ad;
+}
+
+.target-section h3 {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #54595d;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+.target-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #0645ad;
+    word-wrap: break-word;
+}
+
+.stats-section {
+    margin-bottom: 30px;
+}
+
+.stat {
+    margin-bottom: 15px;
+}
+
+.stat-label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #54595d;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #202122;
+}
+
+.stat-unit {
+    font-size: 14px;
+    color: #54595d;
+    margin-left: 5px;
+}
+
+.path-section {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.path-section h4 {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #54595d;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+.path-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.path-item {
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+    color: #0645ad;
+    word-wrap: break-word;
+}
+
+.path-item:hover {
+    background-color: #eaecf0;
+}
+
+.path-item.current {
+    background-color: #0645ad;
+    color: #fff;
+    font-weight: bold;
+}
+
+.quit-btn {
+    padding: 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: inherit;
+    transition: background-color 0.2s;
+}
+
+.quit-btn:hover {
+    background-color: #e8e9ea;
+}
+
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #fff;
+    position: relative;
+}
+
+.article-content {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.article-content iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.article-content h1 {
+    font-family: 'Linux Libertine', Georgia, Times, serif;
+    font-size: 28px;
+    margin-bottom: 8px;
+    font-weight: normal;
+    border-bottom: 1px solid #a2a9b1;
+    padding-bottom: 8px;
+    line-height: 1.3;
+}
+
+.article-content h2 {
+    font-family: 'Linux Libertine', Georgia, Times, serif;
+    font-size: 21px;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    font-weight: normal;
+    border-bottom: 1px solid #a2a9b1;
+    padding-bottom: 4px;
+}
+
+.article-content h3 {
+    font-family: 'Linux Libertine', Georgia, Times, serif;
+    font-size: 17px;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+    font-family: 'Linux Libertine', Georgia, Times, serif;
+    font-size: 14px;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.article-content p {
+    line-height: 1.6;
+    margin-bottom: 16px;
+    margin-top: 0.5em;
+}
+
+.article-content a {
+    color: #0645ad;
+    text-decoration: none;
+    background: none;
+}
+
+.article-content a:hover {
+    text-decoration: underline;
+}
+
+.article-content a:visited {
+    color: #0b0080;
+}
+
+.article-content ul,
+.article-content ol {
+    margin: 0.3em 0 0 1.6em;
+    padding: 0;
+}
+
+.article-content li {
+    margin-bottom: 0.1em;
+}
+
+.article-content img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+}
+
+.article-content table {
+    border-collapse: collapse;
+    margin: 16px 0;
+    background-color: #f8f9fa;
+    color: #202122;
+    border: 1px solid #a2a9b1;
+}
+
+.article-content th {
+    background-color: #eaecf0;
+    text-align: inherit;
+    font-weight: bold;
+}
+
+.article-content th,
+.article-content td {
+    border: 1px solid #a2a9b1;
+    padding: 0.2em 0.4em;
+}
+
+.article-content .infobox {
+    border: 1px solid #a2a9b1;
+    background-color: #f8f9fa;
+    color: #202122;
+    margin: 0.5em 0 0.5em 1em;
+    padding: 0.2em;
+    float: right;
+    clear: right;
+    width: 22em;
+    font-size: 88%;
+    line-height: 1.5;
+}
+
+.article-content .infobox th,
+.article-content .infobox td {
+    vertical-align: top;
+}
+
+.article-content .thumbinner {
+    border: 1px solid #c8ccd1;
+    padding: 3px;
+    background-color: #f8f9fa;
+    font-size: 94%;
+    text-align: center;
+    overflow: hidden;
+}
+
+.article-content .thumb {
+    float: right;
+    clear: right;
+    width: auto;
+    margin: 0.5em 0 1.3em 1.4em;
+}
+
+.article-content .thumbcaption {
+    border: none;
+    line-height: 1.4em;
+    padding: 3px;
+    font-size: 94%;
+    text-align: left;
+}
+
+.article-content blockquote {
+    margin: 1em 2em;
+    padding: 0;
+    border-left: 4px solid #eaecf0;
+    padding-left: 1em;
+    font-style: italic;
+}
+
+.article-content code {
+    background-color: #f8f9fa;
+    border: 1px solid #eaecf0;
+    border-radius: 2px;
+    padding: 1px 4px;
+    font-family: monospace;
+}
+
+.article-content pre {
+    background-color: #f8f9fa;
+    border: 1px solid #eaecf0;
+    padding: 1em;
+    overflow: auto;
+    font-family: monospace;
+}
+
+.loading {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #54595d;
+}
+
+.loading.show {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .game-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 40vh;
+    }
+    
+    .main-content {
+        height: 60vh;
+    }
+    
+    .article-content {
+        padding: 20px;
+    }
+}

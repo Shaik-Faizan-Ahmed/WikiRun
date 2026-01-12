@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiRun - Singleplayer</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="singleplayer.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="sidebar">
+            <div class="target-section">
+                <h3>Target Article</h3>
+                <div id="targetTitle" class="target-title"></div>
+            </div>
+            
+            <div class="stats-section">
+                <div class="stat">
+                    <span class="stat-label">Time</span>
+                    <span id="timer" class="stat-value">0</span>
+                    <span class="stat-unit">ms</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Clicks</span>
+                    <span id="clicks" class="stat-value">0</span>
+                </div>
+            </div>
+            
+            <div class="path-section">
+                <h4>Path Taken</h4>
+                <div id="pathList" class="path-list"></div>
+            </div>
+            
+            <button id="quitBtn" class="quit-btn">Quit</button>
+        </div>
+        
+        <div class="main-content">
+            <div id="articleContent" class="article-content"></div>
+            <div id="loading" class="loading">Loading...</div>
+        </div>
+    </div>
+    
+    <script src="singleplayer.js"></script>
+</body>
+</html>

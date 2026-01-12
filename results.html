@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiRun - Results</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="results.css">
+</head>
+<body>
+    <div class="results-container">
+        <h1>Game Complete!</h1>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Clicks</div>
+                <div id="finalClicks" class="stat-value">0</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Time</div>
+                <div id="finalTime" class="stat-value">0 ms</div>
+            </div>
+        </div>
+        
+        <div class="target-info">
+            <div class="info-label">Target Article</div>
+            <div id="targetArticle" class="info-value"></div>
+        </div>
+        
+        <div class="path-section">
+            <h3>Your Path</h3>
+            <div id="pathDisplay" class="path-display"></div>
+        </div>
+        
+        <div class="actions">
+            <button onclick="location.href='singleplayer.html'" class="action-btn primary">Play Again</button>
+            <button onclick="location.href='index.html'" class="action-btn">Home</button>
+        </div>
+    </div>
+    
+    <script src="results.js"></script>
+</body>
+</html>

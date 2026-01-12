@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiRun</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1><span class="big-letter">W</span><span class="small-letter">IKIRU</span><span
+                    class="small-letter"></span><span class="big-letter">N</span></h1>
+        </div>
+
+        <div class="globe-container">
+            <!-- Top languages - above the globe -->
+            <div class="lang-item top-left" onclick="changeLanguage('en')">
+                <a class="lang-name">English</a>
+                <div class="lang-subtitle">Race Through Knowledge</div>
+                <div class="lang-articles">7,116,000+ articles</div>
+            </div>
+
+            <div class="lang-item top-right" onclick="changeLanguage('te')">
+                <a class="lang-name">తెలుగు</a>
+                <div class="lang-subtitle">జ్ఞానం ద్వారా పందెం</div>
+                <div class="lang-articles">1,118,000+ వ్యాసాలు</div>
+            </div>
+
+            <!-- Upper side languages -->
+            <div class="lang-item upper-left" onclick="changeLanguage('ja')">
+                <a class="lang-name">日本語</a>
+                <div class="lang-subtitle">知識を通しての競争</div>
+                <div class="lang-articles">1,484,000+ 記事</div>
+            </div>
+
+            <div class="lang-item upper-right" onclick="changeLanguage('de')">
+                <a class="lang-name">Deutsch</a>
+                <div class="lang-subtitle">Rennen durch Wissen</div>
+                <div class="lang-articles">3,084,000+ Artikel</div>
+            </div>
+
+            <!-- Middle side languages -->
+            <div class="lang-item middle-left" onclick="changeLanguage('fr')">
+                <a class="lang-name">Français</a>
+                <div class="lang-subtitle">Course à travers la connaissance</div>
+                <div class="lang-articles">2,730,000+ articles</div>
+            </div>
+
+            <div class="lang-item middle-right" onclick="changeLanguage('ru')">
+                <a class="lang-name">Русский</a>
+                <div class="lang-subtitle">Гонка через знания</div>
+                <div class="lang-articles">2,078,000+ статей</div>
+            </div>
+
+            <!-- Lower side languages -->
+            <div class="lang-item lower-left" onclick="changeLanguage('es')">
+                <a class="lang-name">Español</a>
+                <div class="lang-subtitle">Carrera a través del conocimiento</div>
+                <div class="lang-articles">2,085,000+ artículos</div>
+            </div>
+
+            <div class="lang-item lower-right" onclick="changeLanguage('it')">
+                <a class="lang-name">Italiano</a>
+                <div class="lang-subtitle">Corsa attraverso la conoscenza</div>
+                <div class="lang-articles">1,950,000+ voci</div>
+            </div>
+
+            <!-- Bottom languages -->
+            <div class="lang-item bottom-left" onclick="changeLanguage('zh')">
+                <a class="lang-name">中文</a>
+                <div class="lang-subtitle">通过知识竞赛</div>
+                <div class="lang-articles">1,518,000+ 条目 / 條目</div>
+            </div>
+
+            <div class="lang-item bottom-right" onclick="changeLanguage('pl')">
+                <a class="lang-name">Polski</a>
+                <div class="lang-subtitle">Wyścig przez wiedzę</div>
+                <div class="lang-articles">1,680,000+ haseł</div>
+            </div>
+
+            <!-- Globe in center -->
+            <div class="globe">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/200px-Wikipedia-logo-v2.svg.png"
+                    alt="Wikipedia Globe">
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="game-button" id="singleBtn" onclick="location.href='singleplayer.html'">Singleplayer</button>
+            <button class="game-button" id="multiBtn"
+                onclick="location.href='multiplayer-lobby.html'">Multiplayer</button>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: { single: 'Singleplayer', multi: 'Multiplayer' },
+            te: { single: 'ఒంటరి ఆటగాడు', multi: 'బహుళ ఆటగాళ్ళు' },
+            ja: { single: 'シングルプレイヤー', multi: 'マルチプレイヤー' },
+            de: { single: 'Einzelspieler', multi: 'Mehrspieler' },
+            fr: { single: 'Solo', multi: 'Multijoueur' },
+            ru: { single: 'Одиночная игра', multi: 'Многопользовательская игра' },
+            es: { single: 'Un jugador', multi: 'Multijugador' },
+            it: { single: 'Giocatore singolo', multi: 'Multigiocatore' },
+            zh: { single: '单人游戏', multi: '多人游戏' },
+            pl: { single: 'Pojedynczy gracz', multi: 'Wielu graczy' }
+        };
+        
+        function changeLanguage(lang) {
+            document.getElementById('singleBtn').textContent = translations[lang].single;
+            document.getElementById('multiBtn').textContent = translations[lang].multi;
+        }
+    </script>
+</body>
+
+</html>
