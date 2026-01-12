@@ -4,6 +4,7 @@ let clicks = 0;
 let currentArticle = '';
 let targetArticle = '';
 let path = [];
+let pathTimes = [];
 let gameActive = false;
 
 const BACKEND_URL = 'http://localhost:3001';
@@ -23,11 +24,32 @@ function createArticleIframe(title) {
     return iframe;
 }
 
+function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const milliseconds = ms % 1000;
+    const seconds = totalSeconds % 60;
+    const minutes = Math.floor(totalSeconds / 60) % 60;
+    const hours = Math.floor(totalSeconds / 3600);
+    
+    const msStr = String(milliseconds).padStart(3, '0');
+    const secStr = String(seconds).padStart(2, '0');
+    const minStr = String(minutes).padStart(2, '0');
+    const hrStr = String(hours).padStart(2, '0');
+    
+    if (hours > 0) {
+        return `${hrStr}:${minStr}:${secStr}.${msStr}`;
+    } else if (minutes > 0) {
+        return `${minStr}:${secStr}.${msStr}`;
+    } else {
+        return `${secStr}.${msStr}`;
+    }
+}
+
 function startTimer() {
     startTime = Date.now();
     timerInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
-        document.getElementById('timer').textContent = elapsed;
+        document.getElementById('timer').textContent = formatTime(elapsed);
     }, 10);
 }
 
@@ -42,10 +64,18 @@ function updatePath() {
     path.forEach((article, index) => {
         const item = document.createElement('div');
         item.className = 'path-item';
-        if (index === path.length - 1) {
-            item.classList.add('current');
-        }
-        item.textContent = article;
+        
+        const articleSpan = document.createElement('span');
+        articleSpan.className = 'path-item-article';
+        articleSpan.textContent = article;
+        
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'path-item-time';
+        timeSpan.textContent = formatTime(pathTimes[index]);
+        
+        item.appendChild(articleSpan);
+        item.appendChild(timeSpan);
+        
         item.onclick = () => goToPathArticle(index);
         pathList.appendChild(item);
     });
@@ -58,6 +88,7 @@ async function goToPathArticle(index) {
     document.getElementById('clicks').textContent = clicks;
     
     path = path.slice(0, index + 1);
+    pathTimes = pathTimes.slice(0, index + 1);
     currentArticle = path[index];
     
     await loadArticle(currentArticle);
@@ -89,6 +120,7 @@ async function navigateToArticle(title) {
     
     currentArticle = title;
     path.push(title);
+    pathTimes.push(Date.now() - startTime);
     
     await loadArticle(title);
     updatePath();
@@ -131,6 +163,7 @@ async function initGame() {
     currentArticle = start;
     targetArticle = target;
     path = [start];
+    pathTimes = [0];
     
     document.getElementById('targetTitle').textContent = target;
     
@@ -144,10 +177,16 @@ async function initGame() {
 }
 
 document.getElementById('quitBtn').onclick = () => {
-    if (confirm('Are you sure you want to quit? Your progress will be lost.')) {
-        stopTimer();
-        window.location.href = 'index.html';
-    }
+    document.getElementById('quitModal').classList.add('show');
+};
+
+document.getElementById('cancelQuit').onclick = () => {
+    document.getElementById('quitModal').classList.remove('show');
+};
+
+document.getElementById('confirmQuit').onclick = () => {
+    stopTimer();
+    window.location.href = 'index.html';
 };
 
 initGame();
