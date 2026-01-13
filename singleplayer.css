@@ -88,6 +88,38 @@ body {
     color: #0645ad;
     font-weight: 500;
     word-wrap: break-word;
+    margin-bottom: 10px;
+}
+
+.hint-btn {
+    width: 100%;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #202122;
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+.hint-btn:hover {
+    background-color: #eaecf0;
+}
+
+.hint-content {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+}
+
+.hint-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #202122;
 }
 
 .history-section {

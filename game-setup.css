@@ -1,0 +1,167 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    background-color: #f8f9fa;
+    color: #202122;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.setup-container {
+    max-width: 800px;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #a2a9b1;
+    border-radius: 4px;
+    padding: 40px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #a2a9b1;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+}
+
+.header h1 {
+    font-size: 42px;
+    font-weight: normal;
+    letter-spacing: 0.05em;
+}
+
+.big-letter {
+    font-size: 56px;
+}
+
+.small-letter {
+    font-size: 36px;
+}
+
+.setup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.nickname-section label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #202122;
+}
+
+.nickname-section input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+    font-family: inherit;
+}
+
+.nickname-section input:focus {
+    outline: none;
+    border-color: #0645ad;
+}
+
+.difficulty-section h2 {
+    font-size: 20px;
+    font-weight: normal;
+    margin-bottom: 20px;
+    color: #202122;
+}
+
+.difficulty-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.difficulty-card {
+    border: 2px solid #a2a9b1;
+    border-radius: 4px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: #fff;
+}
+
+.difficulty-card:hover {
+    border-color: #0645ad;
+    background-color: #f8f9fa;
+}
+
+.difficulty-card.selected {
+    border-color: #0645ad;
+    background-color: #eaf3ff;
+}
+
+.difficulty-card h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #202122;
+}
+
+.difficulty-desc {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #54595d;
+}
+
+.start-btn {
+    padding: 15px 40px;
+    font-size: 18px;
+    font-family: inherit;
+    background-color: #0645ad;
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    align-self: center;
+}
+
+.start-btn:hover:not(:disabled) {
+    background-color: #0536a0;
+}
+
+.start-btn:disabled {
+    background-color: #a2a9b1;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .difficulty-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .header h1 {
+        font-size: 32px;
+    }
+
+    .big-letter {
+        font-size: 42px;
+    }
+
+    .small-letter {
+        font-size: 28px;
+    }
+}

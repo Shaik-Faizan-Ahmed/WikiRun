@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiRun - Game Setup</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="game-setup.css">
+</head>
+<body>
+    <div class="setup-container">
+        <div class="header">
+            <img src="assets/logo.png" alt="WikiRun Logo" class="logo">
+            <h1><span class="big-letter">W</span><span class="small-letter">IKIRU</span></span><span class="big-letter">N</span></h1>
+        </div>
+
+        <div class="setup-content">
+            <div class="nickname-section">
+                <label for="nickname">Nickname</label>
+                <input type="text" id="nickname" placeholder="Enter your nickname" maxlength="50">
+            </div>
+
+            <div class="difficulty-section">
+                <h2>Select Difficulty</h2>
+                
+                <div class="difficulty-cards">
+                    <div class="difficulty-card" data-difficulty="easy">
+                        <h3>Easy</h3>
+                        <div class="difficulty-desc">Articles related to Asia and Asian countries</div>
+                    </div>
+
+                    <div class="difficulty-card" data-difficulty="medium">
+                        <h3>Medium</h3>
+                        <div class="difficulty-desc">Popular and featured articles from around the world</div>
+                    </div>
+
+                    <div class="difficulty-card" data-difficulty="hard">
+                        <h3>Hard</h3>
+                        <div class="difficulty-desc">Any random Wikipedia article - no restrictions</div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="startBtn" class="start-btn" disabled>Start Game</button>
+        </div>
+    </div>
+
+    <script src="game-setup.js"></script>
+</body>
+</html>

@@ -151,6 +151,27 @@ body {
     margin-top: 2px;
 }
 
+.leaderboard-link {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    cursor: pointer;
+    text-align: center;
+    z-index: 20;
+}
+
+.leaderboard-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0645ad;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.leaderboard-link:hover .leaderboard-text {
+    text-decoration: underline;
+}
+
 .buttons {
     display: flex;
     justify-content: center;
@@ -171,6 +192,16 @@ body {
 
 .game-button:hover {
     background-color: #e8e9ea;
+}
+
+.game-button.dashboard-button {
+    background-color: #00AF89;
+    color: #fff;
+    border-color: #00AF89;
+}
+
+.game-button.dashboard-button:hover {
+    background-color: #009977;
 }
 
 @media (max-width: 768px) {

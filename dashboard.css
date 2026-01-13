@@ -1,0 +1,373 @@
+:root {
+    --wiki-blue: #3366CC;
+    --wiki-hover: #447BDD;
+    --easy-green: #00AF89;
+    --medium-yellow: #FF9500;
+    --hard-red: #DD3333;
+    --bg-light: #F8F9FA;
+    --text-dark: #202122;
+    --border-gray: #E0E0E0;
+    --shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    background: #ffffff;
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-gray);
+    margin-bottom: 30px;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-wiki-logo {
+    width: 50px;
+    height: 50px;
+}
+
+.dashboard-header h1 {
+    font-size: 2em;
+    font-weight: normal;
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    color: #000;
+}
+
+.back-link-main {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0645ad;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.back-link-main:hover {
+    text-decoration: underline;
+}
+
+.all-leaderboards {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.leaderboard-section {
+    background: white;
+    border: 1px solid var(--border-gray);
+    border-radius: 4px;
+    padding: 20px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.section-title {
+    font-size: 1.8em;
+    font-weight: normal;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-gray);
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+}
+
+.wiki-table-container {
+    overflow-x: auto;
+}
+
+.wiki-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #a2a9b1;
+    background: #f8f9fa;
+    font-size: 0.95em;
+}
+
+.wiki-table thead {
+    background: #eaecf0;
+}
+
+.wiki-table th {
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    border: 1px solid #a2a9b1;
+    color: #202122;
+    cursor: pointer;
+    user-select: none;
+}
+
+.wiki-table th:hover {
+    background: #dfe2e6;
+}
+
+.wiki-table td {
+    padding: 8px 12px;
+    border: 1px solid #a2a9b1;
+    background: #ffffff;
+}
+
+.wiki-table tbody tr:nth-child(even) td {
+    background: #f8f9fa;
+}
+
+.wiki-table tbody tr:hover td {
+    background: #eaecf0;
+}
+
+.rank-cell {
+    font-weight: bold;
+    text-align: center;
+    width: 80px;
+}
+
+.player-link {
+    color: #0645ad;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.player-link:hover {
+    text-decoration: underline;
+}
+
+.player-link:visited {
+    color: #0b0080;
+}
+
+.score-cell {
+    text-align: right;
+    font-family: monospace;
+}
+
+.time-cell {
+    text-align: right;
+    font-family: monospace;
+}
+
+.path-link {
+    color: #0645ad;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.path-link:hover {
+    text-decoration: underline;
+}
+
+.path-link:visited {
+    color: #0b0080;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 1.2em;
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 1.2em;
+    font-style: italic;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 4px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    border: 1px solid #a2a9b1;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border-gray);
+    background: #f8f9fa;
+}
+
+.modal-header h3 {
+    font-size: 1.5em;
+    font-weight: normal;
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 2em;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: var(--hard-red);
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.path-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    border: 1px solid #a2a9b1;
+}
+
+.path-target {
+    font-weight: bold;
+    color: #202122;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+}
+
+.modal-path {
+    margin-bottom: 20px;
+}
+
+.path-step {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: #f8f9fa;
+    border-radius: 2px;
+    border-left: 3px solid #0645ad;
+}
+
+.path-step.target {
+    border-left-color: #00af89;
+    background: #eaf6f3;
+}
+
+.step-number {
+    background: #0645ad;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-weight: bold;
+    font-size: 13px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.step-article {
+    font-weight: normal;
+    color: #202122;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+}
+
+.modal-stats {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background: var(--bg-light);
+    border-radius: 4px;
+    border: 1px solid var(--border-gray);
+}
+
+.stat-item {
+    flex: 1;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #202122;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .header-logo {
+        flex-direction: column;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.5em;
+    }
+    
+    .leaderboard-section {
+        max-height: none;
+    }
+    
+    .wiki-table {
+        font-size: 0.85em;
+    }
+    
+    .wiki-table th,
+    .wiki-table td {
+        padding: 6px 8px;
+    }
+}

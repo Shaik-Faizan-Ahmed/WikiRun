@@ -6,13 +6,48 @@ let targetArticle = '';
 let path = [];
 let pathTimes = [];
 let gameActive = false;
+let difficulty = 'hard';
+let nickname = '';
+let usedHint = false;
 
 const BACKEND_URL = 'http://localhost:3001';
 
+const urlParams = new URLSearchParams(window.location.search);
+difficulty = urlParams.get('difficulty') || 'hard';
+nickname = urlParams.get('nickname') || 'Player';
+
 async function fetchRandomArticle() {
-    const response = await fetch(`${BACKEND_URL}/api/random`);
+    const response = await fetch(`${BACKEND_URL}/api/random/${difficulty}`);
     const data = await response.json();
     return data.title;
+}
+
+async function fetchArticleDescription(title) {
+    try {
+        const params = new URLSearchParams({
+            action: 'query',
+            format: 'json',
+            titles: title,
+            prop: 'extracts',
+            exintro: true,
+            explaintext: true,
+            origin: '*'
+        });
+        
+        const response = await fetch(`https://en.wikipedia.org/w/api.php?${params}`);
+        const data = await response.json();
+        const pages = data.query.pages;
+        const page = pages[Object.keys(pages)[0]];
+        
+        if (page.extract) {
+            const sentences = page.extract.split('. ');
+            return sentences.slice(0, 2).join('. ') + '.';
+        }
+        return 'No description available.';
+    } catch (error) {
+        console.error('Failed to fetch description:', error);
+        return 'Failed to load description.';
+    }
 }
 
 function createArticleIframe(title) {
@@ -127,18 +162,39 @@ async function navigateToArticle(title) {
 }
 
 function checkWinCondition() {
-    if (currentArticle === targetArticle) {
+    if (currentArticle.toLowerCase().replace(/_/g, ' ') === targetArticle.toLowerCase().replace(/_/g, ' ')) {
         gameActive = false;
         stopTimer();
         
         const elapsed = Date.now() - startTime;
         
-        setTimeout(() => {
+        setTimeout(async () => {
+            try {
+                await fetch(`${BACKEND_URL}/api/leaderboard`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nickname: nickname,
+                        difficulty: difficulty,
+                        clicks: clicks,
+                        time: elapsed,
+                        path: path,
+                        usedHint: usedHint
+                    })
+                });
+            } catch (error) {
+                console.error('Failed to submit to leaderboard:', error);
+            }
+            
             const result = {
                 clicks: clicks,
                 time: elapsed,
                 target: targetArticle,
-                path: path
+                path: path,
+                difficulty: difficulty,
+                nickname: nickname
             };
             localStorage.setItem('gameResult', JSON.stringify(result));
             window.location.href = 'results.html';
@@ -187,6 +243,26 @@ document.getElementById('cancelQuit').onclick = () => {
 document.getElementById('confirmQuit').onclick = () => {
     stopTimer();
     window.location.href = 'index.html';
+};
+
+document.getElementById('hintBtn').onclick = async () => {
+    const hintContent = document.getElementById('hintContent');
+    const hintBtn = document.getElementById('hintBtn');
+    const hintText = document.getElementById('hintText');
+    
+    if (hintContent.style.display === 'none') {
+        if (!usedHint) {
+            usedHint = true;
+            hintText.textContent = 'Loading...';
+            const description = await fetchArticleDescription(targetArticle);
+            hintText.textContent = description;
+        }
+        hintContent.style.display = 'block';
+        hintBtn.textContent = '▲ Hide description';
+    } else {
+        hintContent.style.display = 'none';
+        hintBtn.textContent = '▼ Show description';
+    }
 };
 
 initGame();

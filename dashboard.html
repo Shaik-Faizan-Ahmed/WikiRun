@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiRun - Leaderboards</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="header-logo">
+                <img src="assets/logo.png" alt="WikiRun" class="header-wiki-logo">
+                <h1>Leaderboard</h1>
+            </div>
+            <a href="index.html" class="back-link-main">Back to Game</a>
+        </header>
+
+        <div class="all-leaderboards">
+            <div class="leaderboard-section easy-section">
+                <h2 class="section-title">Easy</h2>
+                <div id="easyLeaderboard" class="wiki-table-container">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-section medium-section">
+                <h2 class="section-title">Medium</h2>
+                <div id="mediumLeaderboard" class="wiki-table-container">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-section hard-section">
+                <h2 class="section-title">Hard</h2>
+                <div id="hardLeaderboard" class="wiki-table-container">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="pathModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Player's Path</h3>
+                    <button onclick="closePathModal()" class="close-btn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="path-info">
+                        <span id="pathTarget" class="path-target"></span>
+                    </div>
+                    <div id="modalPath" class="modal-path"></div>
+                    <div id="modalStats" class="modal-stats"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
