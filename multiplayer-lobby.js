@@ -3,7 +3,7 @@ let username = '';
 let roomCode = '';
 let currentDifficulty = 'hard';
 
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = 'https://wikirun.onrender.com';
 
 const screens = {
     menu: document.getElementById('menuScreen'),

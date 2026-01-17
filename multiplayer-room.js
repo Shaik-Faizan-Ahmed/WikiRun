@@ -4,7 +4,7 @@ let roomCode = '';
 let isHost = false;
 let currentDifficulty = 'hard';
 
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = 'https://wikirun.onrender.com';
 
 const urlParams = new URLSearchParams(window.location.search);
 roomCode = urlParams.get('roomCode');

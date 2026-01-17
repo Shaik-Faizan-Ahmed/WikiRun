@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = 'https://wikirun.onrender.com';
 
 let currentSortColumn = 'rank';
 let currentSortOrder = 'asc';

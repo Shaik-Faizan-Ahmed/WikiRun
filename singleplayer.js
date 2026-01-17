@@ -10,7 +10,7 @@ let difficulty = 'hard';
 let nickname = '';
 let usedHint = false;
 
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = 'https://wikirun.onrender.com';
 
 const urlParams = new URLSearchParams(window.location.search);
 difficulty = urlParams.get('difficulty') || 'hard';
