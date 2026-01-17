@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiRun - Room Lobby</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="multiplayer-room.css">
+</head>
+<body>
+    <div class="lobby-container">
+        <div class="logo-header">
+            <h1><span class="big-letter">W</span><span class="small-letter">IKIRU</span><span class="big-letter">N</span></h1>
+        </div>
+
+        <div class="card room-card">
+            <h2>Room <span id="roomCodeDisplay"></span></h2>
+            
+            <div class="room-layout">
+                <div class="room-left">
+                    <div class="difficulty-control" id="difficultyControl" style="display:none;">
+                        <label>Difficulty:</label>
+                        <select id="roomDifficulty" class="difficulty-select">
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="difficulty-display" id="difficultyDisplay">
+                        <label>Difficulty:</label>
+                        <span id="currentDifficulty">Hard</span>
+                    </div>
+                </div>
+                
+                <div class="room-right">
+                    <div class="room-info">
+                        <div class="player-count">Players: <span id="playerCount">0</span>/6</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="players-list" id="playersList"></div>
+            
+            <div class="room-controls">
+                <button id="startGameBtn" class="primary-btn" style="display:none;">Start Game</button>
+                <button id="viewLeaderboardBtn" class="secondary-btn">View Leaderboard</button>
+                <button id="leaveRoomBtn" class="back-btn">Leave Room</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="multiplayer-room.js"></script>
+</body>
+</html>

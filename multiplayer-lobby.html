@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiRun - Multiplayer Lobby</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="multiplayer-lobby.css">
+</head>
+<body>
+    <div class="lobby-container">
+        <div class="logo-header">
+            <h1><span class="big-letter">W</span><span class="small-letter">IKIRU</span><span class="big-letter">N</span></h1>
+        </div>
+
+        <div id="menuScreen" class="screen active">
+            <div class="card">
+                <h2>Multiplayer</h2>
+                <button id="createRoomBtn" class="primary-btn">Create Room</button>
+                <button id="joinRoomBtn" class="secondary-btn">Join Room</button>
+                <button id="backBtn" class="back-btn">Back to Menu</button>
+            </div>
+        </div>
+
+        <div id="createSetupScreen" class="screen">
+            <div class="card">
+                <h2>Create Room</h2>
+                <div class="form-group">
+                    <label>Your Username</label>
+                    <input type="text" id="createUsername" placeholder="Enter username" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label>Difficulty</label>
+                    <select id="createDifficulty" class="difficulty-select">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard" selected>Hard</option>
+                    </select>
+                </div>
+                <button id="confirmCreate" class="primary-btn">Create Room</button>
+                <button id="cancelCreate" class="secondary-btn">Cancel</button>
+            </div>
+        </div>
+
+        <div id="joinSetupScreen" class="screen">
+            <div class="card">
+                <h2>Join Room</h2>
+                <div class="form-group">
+                    <label>Your Username</label>
+                    <input type="text" id="joinUsername" placeholder="Enter username" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label>Room Code</label>
+                    <input type="text" id="roomCodeInput" placeholder="Enter 4-digit code" maxlength="4">
+                </div>
+                <button id="confirmJoin" class="primary-btn">Join Room</button>
+                <button id="cancelJoin" class="secondary-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="multiplayer-lobby.js"></script>
+</body>
+</html>

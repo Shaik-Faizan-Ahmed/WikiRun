@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiRun - Results</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="multiplayer-results.css">
+</head>
+<body>
+    <div class="results-container">
+        <div class="logo-header">
+            <h1><span class="big-letter">W</span><span class="small-letter">IKIRU</span><span class="big-letter">N</span></h1>
+        </div>
+
+        <div class="results-content">
+            <div class="your-stats-card">
+                <h2>Your Performance</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Clicks</div>
+                        <div class="stat-value" id="yourClicks">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Time</div>
+                        <div class="stat-value" id="yourTime">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Position</div>
+                        <div class="stat-value" id="yourPosition">-</div>
+                    </div>
+                </div>
+                
+                <div class="path-section">
+                    <h3>Your Path</h3>
+                    <div id="yourPath" class="path-display"></div>
+                </div>
+            </div>
+
+            <div class="leaderboard-card">
+                <h2>Room Leaderboard</h2>
+                <div class="leaderboard-tabs">
+                    <button class="tab-btn active" data-tab="overall">Overall Wins</button>
+                    <button class="tab-btn" data-tab="podium">Podium Finishes</button>
+                </div>
+                
+                <div class="tab-content active" id="overallTab">
+                    <div class="leaderboard-list" id="overallLeaderboard"></div>
+                </div>
+                
+                <div class="tab-content" id="podiumTab">
+                    <div class="leaderboard-list" id="podiumLeaderboard"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button id="playAgainBtn" class="primary-btn">Play Again</button>
+            <button id="backToLobbyBtn" class="secondary-btn">Back to Lobby</button>
+            <button id="mainMenuBtn" class="back-btn">Main Menu</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="multiplayer-results.js"></script>
+</body>
+</html>

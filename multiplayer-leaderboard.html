@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiRun - Multiplayer Leaderboard</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="multiplayer-leaderboard.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo-header">
+            <h1><span class="big-letter">W</span><span class="small-letter">IKIRU</span><span class="big-letter">N</span></h1>
+        </div>
+
+        <div class="card">
+            <div class="header-section">
+                <h2>Room <span id="roomCodeDisplay"></span> - Leaderboard</h2>
+                <div class="difficulty-badge" id="difficultyBadge">Hard</div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="overall">Overall Wins</button>
+                <button class="tab-btn" data-tab="podium">Podium Finishes</button>
+                <button class="tab-btn" data-tab="matches">Match History</button>
+            </div>
+
+            <div class="tab-content active" id="overallTab">
+                <div class="leaderboard" id="overallLeaderboard">
+                    <div class="loading">Loading leaderboard...</div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="podiumTab">
+                <div class="leaderboard" id="podiumLeaderboard">
+                    <div class="loading">Loading leaderboard...</div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="matchesTab">
+                <div class="match-history" id="matchHistory">
+                    <div class="loading">Loading match history...</div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="backToLobbyBtn" class="primary-btn">Back to Lobby</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="multiplayer-leaderboard.js"></script>
+</body>
+</html>

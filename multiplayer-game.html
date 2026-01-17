@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiRun - Multiplayer</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="multiplayer-game.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="sidebar">
+            <div class="header-section">
+                <img src="assets/logo.png" alt="WikiRun Logo" class="logo-img">
+                <div class="header-text">
+                    <div class="wiki-text">WIKIRUN</div>
+                    <div class="speedrun-text">Multiplayer</div>
+                </div>
+                <button id="quitBtn" class="quit-btn-header">Quit</button>
+            </div>
+
+            <div class="target-section">
+                <h3>Target</h3>
+                <div id="targetTitle" class="target-title"></div>
+                <button id="hintBtn" class="hint-btn">▼ Show description</button>
+                <div id="hintContent" class="hint-content" style="display: none;">
+                    <div id="hintText" class="hint-text"></div>
+                </div>
+            </div>
+
+            <div class="standings-section">
+                <h3>Current Standings</h3>
+                <div id="standingsList" class="standings-list"></div>
+            </div>
+
+            <div class="history-section">
+                <h3>Your Path</h3>
+                <div class="history-header">
+                    <span class="history-col-article">Article</span>
+                    <span class="history-col-time">Time</span>
+                </div>
+                <div id="pathList" class="path-list"></div>
+            </div>
+
+            <div class="stats-footer">
+                <div class="clicks-display">Clicks: <span id="clicks">0</span></div>
+                <div id="timer" class="timer-display">00:00.000</div>
+            </div>
+            
+            <div class="host-controls" id="hostControls" style="display:none;">
+                <button id="endRoundBtn" class="end-round-btn">End Round</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div id="articleContent" class="article-content"></div>
+            <div id="loading" class="loading">Loading...</div>
+        </div>
+    </div>
+
+    <div id="quitModal" class="modal">
+        <div class="modal-content">
+            <h2>Quit Game</h2>
+            <p>Are you sure you want to quit? You will return to the lobby.</p>
+            <div class="modal-buttons">
+                <button id="cancelQuit" class="modal-btn modal-btn-cancel">Cancel</button>
+                <button id="confirmQuit" class="modal-btn modal-btn-confirm">Quit</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="multiplayer-game.js"></script>
+</body>
+</html>
