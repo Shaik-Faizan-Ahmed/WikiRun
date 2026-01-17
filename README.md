@@ -1,8 +1,16 @@
-# 🎮 WikiRun
-
-**A fast-paced Wikipedia racing game where speed meets knowledge!**
-
-Race from one Wikipedia article to another using only the links within articles. Challenge yourself in single-player mode or compete against friends in real-time multiplayer matches!
+<div align="center">
+  <img src="assets/logo.png" alt="WikiRun Logo" width="200"/>
+  
+  # 🎮 WikiRun
+  
+  **A fast-paced Wikipedia racing game where speed meets knowledge!**
+  
+  Race from one Wikipedia article to another using only the links within articles. Challenge yourself in single-player mode or compete against friends in real-time multiplayer matches!
+  
+  **[🎮 Play WikiRun Now →](https://wiki-run.vercel.app/)**
+  
+  [📖 About](#-about-the-game) | [✨ Features](#-features) | [🎯 How to Play](#-how-to-play) | [🛠️ Technologies](#️-technologies-used) | [🔧 Technical Highlights](#-technical-highlights) | [🚀 Setup](#-setup--installation) | [🎯 Future Plans](#-future-enhancements) | [🤝 Contributing](#-contributing)
+</div>
 
 ---
 
