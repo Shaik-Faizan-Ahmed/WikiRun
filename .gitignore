@@ -7,10 +7,11 @@ npm-debug.log
 yarn-error.log
 *.log
 
-# Environment variables
+# Environment variables (CRITICAL - Never commit these!)
 .env
 .env.local
 .env.*.local
+backend/.env
 
 # Database files
 backend/*.db
@@ -19,6 +20,9 @@ backend/*.db-wal
 backend/*.db-shm
 *.sqlite
 *.sqlite3
+
+# SQL dumps and data files (keep schema files like db-setup.sql)
+backend/dummy-data.sql
 
 # Python virtual environment
 backend/venv/

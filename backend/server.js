@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
@@ -5,6 +6,8 @@ import * as cheerio from 'cheerio';
 import pkg from 'pg';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import validator from 'validator';
+import rateLimit from 'express-rate-limit';
 const { Pool } = pkg;
 
 const app = express();
@@ -16,20 +19,93 @@ const io = new Server(httpServer, {
     }
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'wikirun',
-    password: 'postgres',
-    port: 5432,
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: parseInt(process.env.DB_PORT || '5432'),
 });
 
 app.use(cors());
 app.use(express.json());
 
 const API_BASE = 'https://en.wikipedia.org/w/api.php';
+
+// Rate limiters
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Max 100 requests per window per IP
+    message: 'Too many requests from this IP, please try again later.'
+});
+
+const leaderboardLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 10, // Max 10 submissions per minute
+    message: 'Too many leaderboard submissions, please slow down.'
+});
+
+// Apply rate limiting to API routes
+app.use('/api/', apiLimiter);
+
+// Validation helper functions
+function sanitizeUsername(username) {
+    if (!username || typeof username !== 'string') {
+        return null;
+    }
+    
+    // Remove HTML tags
+    const cleaned = validator.escape(username.trim());
+    
+    // Check length (1-20 characters)
+    if (cleaned.length < 1 || cleaned.length > 20) {
+        return null;
+    }
+    
+    // Only allow alphanumeric, spaces, underscores, hyphens
+    if (!/^[a-zA-Z0-9 _-]+$/.test(cleaned)) {
+        return null;
+    }
+    
+    return cleaned;
+}
+
+function sanitizeRoomCode(roomCode) {
+    if (!roomCode || typeof roomCode !== 'string') {
+        return null;
+    }
+    
+    // Room codes should be 4 digits
+    if (!/^\d{4}$/.test(roomCode)) {
+        return null;
+    }
+    
+    return roomCode;
+}
+
+function validateDifficulty(difficulty) {
+    const validDifficulties = ['easy', 'medium', 'hard'];
+    return validDifficulties.includes(difficulty) ? difficulty : null;
+}
+
+function sanitizePath(path) {
+    if (!Array.isArray(path)) {
+        return [];
+    }
+    
+    // Limit path length to prevent abuse
+    if (path.length > 1000) {
+        return path.slice(0, 1000);
+    }
+    
+    // Sanitize each article title
+    return path.map(article => {
+        if (typeof article !== 'string') return '';
+        return validator.escape(article.substring(0, 500)); // Limit article title length
+    });
+}
 
 const rooms = new Map();
 const activeSessions = new Map();
@@ -42,32 +118,52 @@ io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
 
     socket.on('createRoom', ({ username, difficulty }) => {
+        const cleanUsername = sanitizeUsername(username);
+        if (!cleanUsername) {
+            socket.emit('roomError', { message: 'Invalid username. Use 1-20 alphanumeric characters only.' });
+            return;
+        }
+        
+        const validDifficulty = validateDifficulty(difficulty) || 'hard';
         const roomCode = generateRoomCode();
         
         rooms.set(roomCode, {
             code: roomCode,
             hostUsername: null,
             players: [],
-            difficulty: difficulty || 'hard',
+            difficulty: validDifficulty,
             leaderboard: new Map(),
             matchHistory: []
         });
 
         socket.emit('roomCreated', { 
             roomCode, 
-            difficulty: difficulty || 'hard'
+            difficulty: validDifficulty
         });
     });
 
     socket.on('joinRoom', ({ roomCode, username }) => {
-        const room = rooms.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        const cleanUsername = sanitizeUsername(username);
+        
+        if (!cleanRoomCode) {
+            socket.emit('roomError', { message: 'Invalid room code.' });
+            return;
+        }
+        
+        if (!cleanUsername) {
+            socket.emit('roomError', { message: 'Invalid username. Use 1-20 alphanumeric characters only.' });
+            return;
+        }
+        
+        const room = rooms.get(cleanRoomCode);
         
         if (!room) {
             socket.emit('roomError', { message: 'Room not found' });
             return;
         }
         
-        const existingPlayer = room.players.find(p => p.username === username);
+        const existingPlayer = room.players.find(p => p.username === cleanUsername);
         
         if (existingPlayer) {
             existingPlayer.id = socket.id;
@@ -76,54 +172,65 @@ io.on('connection', (socket) => {
                 socket.emit('roomError', { message: 'Room is full' });
                 return;
             }
-            room.players.push({ id: socket.id, username });
+            room.players.push({ id: socket.id, username: cleanUsername });
             
             if (room.players.length === 1) {
-                room.hostUsername = username;
+                room.hostUsername = cleanUsername;
             }
         }
         
-        socket.join(roomCode);
+        socket.join(cleanRoomCode);
         
         socket.emit('joinedRoom', { 
-            roomCode, 
+            roomCode: cleanRoomCode, 
             players: room.players,
             difficulty: room.difficulty
         });
-        socket.to(roomCode).emit('playerJoined', { players: room.players });
+        socket.to(cleanRoomCode).emit('playerJoined', { players: room.players });
     });
 
     socket.on('leaveRoom', ({ roomCode }) => {
-        const room = rooms.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        if (!cleanRoomCode) return;
+        
+        const room = rooms.get(cleanRoomCode);
         if (!room) return;
 
         const leavingPlayer = room.players.find(p => p.id === socket.id);
         room.players = room.players.filter(p => p.id !== socket.id);
-        socket.leave(roomCode);
+        socket.leave(cleanRoomCode);
 
         if (room.players.length === 0) {
-            rooms.delete(roomCode);
-            activeSessions.delete(roomCode);
-            console.log(`Room ${roomCode} deleted - no players remaining`);
+            rooms.delete(cleanRoomCode);
+            activeSessions.delete(cleanRoomCode);
+            console.log(`Room ${cleanRoomCode} deleted - no players remaining`);
         } else {
             if (leavingPlayer && room.hostUsername === leavingPlayer.username) {
                 room.hostUsername = room.players[0].username;
             }
-            io.to(roomCode).emit('playerLeft', { players: room.players });
+            io.to(cleanRoomCode).emit('playerLeft', { players: room.players });
         }
     });
 
     socket.on('changeDifficulty', ({ roomCode, difficulty }) => {
-        const room = rooms.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        const validDifficulty = validateDifficulty(difficulty);
+        
+        if (!cleanRoomCode || !validDifficulty) return;
+        
+        const room = rooms.get(cleanRoomCode);
         const player = room?.players.find(p => p.id === socket.id);
         if (!room || !player || room.hostUsername !== player.username) return;
 
-        room.difficulty = difficulty;
-        io.to(roomCode).emit('difficultyChanged', { difficulty });
+        room.difficulty = validDifficulty;
+        io.to(cleanRoomCode).emit('difficultyChanged', { difficulty: validDifficulty });
     });
 
     socket.on('startGame', async ({ roomCode }) => {
-        const room = rooms.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        if (!cleanRoomCode) return;
+        
+        const room = rooms.get(cleanRoomCode);
         const player = room?.players.find(p => p.id === socket.id);
         if (!room || !player || room.hostUsername !== player.username) return;
 
@@ -132,7 +239,7 @@ io.on('connection', (socket) => {
         const target = await fetchRandomArticle(difficulty);
 
         const session = {
-            roomCode,
+            roomCode: cleanRoomCode,
             start,
             target,
             difficulty,
@@ -148,16 +255,21 @@ io.on('connection', (socket) => {
             startTime: Date.now()
         };
 
-        activeSessions.set(roomCode, session);
+        activeSessions.set(cleanRoomCode, session);
 
-        io.to(roomCode).emit('gameStarting', { start, target, difficulty });
+        io.to(cleanRoomCode).emit('gameStarting', { start, target, difficulty });
     });
 
     socket.on('endRound', ({ roomCode, username }) => {
-        console.log('🟢 SERVER: endRound event received for room:', roomCode, 'from username:', username);
-        const room = rooms.get(roomCode);
-        const session = activeSessions.get(roomCode);
-        const player = room?.players.find(p => p.username === username);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        const cleanUsername = sanitizeUsername(username);
+        
+        if (!cleanRoomCode || !cleanUsername) return;
+        
+        console.log('🟢 SERVER: endRound event received for room:', cleanRoomCode, 'from username:', cleanUsername);
+        const room = rooms.get(cleanRoomCode);
+        const session = activeSessions.get(cleanRoomCode);
+        const player = room?.players.find(p => p.username === cleanUsername);
         
         console.log('🟢 SERVER: room exists:', !!room);
         console.log('🟢 SERVER: session exists:', !!session);
@@ -169,20 +281,24 @@ io.on('connection', (socket) => {
             return;
         }
 
-        recordMatchResults(roomCode, session);
+        recordMatchResults(cleanRoomCode, session);
         
-        console.log('🟢 SERVER: About to emit roundEnded to game-' + roomCode);
-        // Emit to the game session room where all players are
-        io.to(`game-${roomCode}`).emit('roundEnded', {});
+        console.log('🟢 SERVER: About to emit roundEnded to game-' + cleanRoomCode);
+        io.to(`game-${cleanRoomCode}`).emit('roundEnded', {});
         console.log('🟢 SERVER: roundEnded event emitted');
     });
 
     socket.on('joinGameSession', ({ roomCode, username }) => {
-        console.log(`🔵 SERVER: ${username} joining game session: game-${roomCode}`);
-        socket.join(`game-${roomCode}`);
-        console.log(`🔵 SERVER: ${username} successfully joined game-${roomCode}`);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        const cleanUsername = sanitizeUsername(username);
         
-        const session = activeSessions.get(roomCode);
+        if (!cleanRoomCode || !cleanUsername) return;
+        
+        console.log(`🔵 SERVER: ${cleanUsername} joining game session: game-${cleanRoomCode}`);
+        socket.join(`game-${cleanRoomCode}`);
+        console.log(`🔵 SERVER: ${cleanUsername} successfully joined game-${cleanRoomCode}`);
+        
+        const session = activeSessions.get(cleanRoomCode);
         if (session) {
             const standings = session.players
                 .map(p => ({
@@ -202,18 +318,32 @@ io.on('connection', (socket) => {
     });
 
     socket.on('leaveGameSession', ({ roomCode }) => {
-        console.log(`🔴 SERVER: Player leaving game session: game-${roomCode}`);
-        socket.leave(`game-${roomCode}`);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        if (!cleanRoomCode) return;
+        
+        console.log(`🔴 SERVER: Player leaving game session: game-${cleanRoomCode}`);
+        socket.leave(`game-${cleanRoomCode}`);
     });
 
     socket.on('playerProgress', ({ roomCode, username, clicks, currentArticle }) => {
-        const session = activeSessions.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        const cleanUsername = sanitizeUsername(username);
+        
+        if (!cleanRoomCode || !cleanUsername) return;
+        
+        const session = activeSessions.get(cleanRoomCode);
         if (!session) return;
 
-        const player = session.players.find(p => p.username === username);
+        const player = session.players.find(p => p.username === cleanUsername);
         if (player && !player.finished) {
-            player.clicks = clicks;
-            player.currentArticle = currentArticle;
+            // Validate clicks is a reasonable number
+            const validClicks = typeof clicks === 'number' && clicks >= 0 && clicks <= 10000 ? clicks : player.clicks;
+            player.clicks = validClicks;
+            
+            // Sanitize current article
+            if (currentArticle && typeof currentArticle === 'string') {
+                player.currentArticle = validator.escape(currentArticle.substring(0, 500));
+            }
         }
 
         const standings = session.players
@@ -229,21 +359,28 @@ io.on('connection', (socket) => {
                 return a.clicks - b.clicks;
             });
 
-        io.to(`game-${roomCode}`).emit('standingsUpdate', { standings });
+        io.to(`game-${cleanRoomCode}`).emit('standingsUpdate', { standings });
     });
 
     socket.on('playerFinished', async ({ roomCode, username, clicks, time, path, usedHint }) => {
-        const session = activeSessions.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        const cleanUsername = sanitizeUsername(username);
+        
+        if (!cleanRoomCode || !cleanUsername) return;
+        
+        const session = activeSessions.get(cleanRoomCode);
         if (!session) return;
 
-        const player = session.players.find(p => p.username === username);
+        const player = session.players.find(p => p.username === cleanUsername);
         if (!player || player.finished) return;
 
         player.finished = true;
-        player.clicks = clicks;
-        player.time = time;
-        player.path = path;
-        player.usedHint = usedHint;
+        
+        // Validate numeric inputs
+        player.clicks = typeof clicks === 'number' && clicks >= 0 && clicks <= 10000 ? clicks : 0;
+        player.time = typeof time === 'number' && time >= 0 && time <= 86400000 ? time : 0; // Max 24 hours
+        player.path = sanitizePath(path);
+        player.usedHint = Boolean(usedHint);
         session.finishedCount++;
 
         const finishedPlayers = session.players.filter(p => p.finished)
@@ -266,7 +403,7 @@ io.on('connection', (socket) => {
                 return a.clicks - b.clicks;
             });
 
-        io.to(`game-${roomCode}`).emit('standingsUpdate', { standings });
+        io.to(`game-${cleanRoomCode}`).emit('standingsUpdate', { standings });
 
         const totalPlayers = session.players.length;
         let gameEnded = false;
@@ -280,16 +417,21 @@ io.on('connection', (socket) => {
         }
 
         if (gameEnded) {
-            await recordMatchResults(roomCode, session);
-            io.to(`game-${roomCode}`).emit('gameEnded', {});
+            await recordMatchResults(cleanRoomCode, session);
+            io.to(`game-${cleanRoomCode}`).emit('gameEnded', {});
         }
     });
 
     socket.on('playerQuit', ({ roomCode, username }) => {
-        const session = activeSessions.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        const cleanUsername = sanitizeUsername(username);
+        
+        if (!cleanRoomCode || !cleanUsername) return;
+        
+        const session = activeSessions.get(cleanRoomCode);
         if (!session) return;
 
-        const player = session.players.find(p => p.username === username);
+        const player = session.players.find(p => p.username === cleanUsername);
         if (player) {
             player.finished = true;
             player.position = null;
@@ -297,15 +439,23 @@ io.on('connection', (socket) => {
     });
 
     socket.on('getResults', ({ roomCode, username }) => {
-        const room = rooms.get(roomCode);
-        const session = activeSessions.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        const cleanUsername = sanitizeUsername(username);
+        
+        if (!cleanRoomCode || !cleanUsername) {
+            socket.emit('resultsData', { yourStats: null, leaderboard: [] });
+            return;
+        }
+        
+        const room = rooms.get(cleanRoomCode);
+        const session = activeSessions.get(cleanRoomCode);
         
         if (!room || !session) {
             socket.emit('resultsData', { yourStats: null, leaderboard: [] });
             return;
         }
 
-        const player = session.players.find(p => p.username === username);
+        const player = session.players.find(p => p.username === cleanUsername);
         
         const yourStats = player ? {
             clicks: player.clicks,
@@ -320,24 +470,32 @@ io.on('connection', (socket) => {
     });
 
     socket.on('rejoinRoom', ({ roomCode, username }) => {
-        const room = rooms.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        const cleanUsername = sanitizeUsername(username);
+        
+        if (!cleanRoomCode || !cleanUsername) {
+            socket.emit('roomError', { message: 'Invalid room code or username.' });
+            return;
+        }
+        
+        const room = rooms.get(cleanRoomCode);
         
         if (!room) {
             socket.emit('roomError', { message: 'Room not found' });
             return;
         }
         
-        const existingPlayer = room.players.find(p => p.username === username);
+        const existingPlayer = room.players.find(p => p.username === cleanUsername);
         
         if (existingPlayer) {
             existingPlayer.id = socket.id;
-            socket.join(roomCode);
+            socket.join(cleanRoomCode);
             
             socket.emit('rejoinedRoom', { 
-                roomCode, 
+                roomCode: cleanRoomCode, 
                 players: room.players,
                 difficulty: room.difficulty,
-                isHost: room.hostUsername === username
+                isHost: room.hostUsername === cleanUsername
             });
         } else {
             socket.emit('roomError', { message: 'Player not found in room' });
@@ -345,7 +503,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('getRoomLeaderboard', ({ roomCode }) => {
-        const room = rooms.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        
+        if (!cleanRoomCode) {
+            socket.emit('roomError', { message: 'Invalid room code.' });
+            return;
+        }
+        
+        const room = rooms.get(cleanRoomCode);
         
         if (!room) {
             socket.emit('roomError', { message: 'Room not found' });
@@ -370,18 +535,23 @@ io.on('connection', (socket) => {
     });
 
     socket.on('playAgain', async ({ roomCode, username }) => {
-        const room = rooms.get(roomCode);
+        const cleanRoomCode = sanitizeRoomCode(roomCode);
+        const cleanUsername = sanitizeUsername(username);
+        
+        if (!cleanRoomCode || !cleanUsername) return;
+        
+        const room = rooms.get(cleanRoomCode);
         if (!room) return;
 
-        const player = room.players.find(p => p.username === username);
-        if (!player || room.hostUsername !== username) return;
+        const player = room.players.find(p => p.username === cleanUsername);
+        if (!player || room.hostUsername !== cleanUsername) return;
 
         const difficulty = room.difficulty;
         const start = await fetchRandomArticle(difficulty);
         const target = await fetchRandomArticle(difficulty);
 
         const session = {
-            roomCode,
+            roomCode: cleanRoomCode,
             start,
             target,
             difficulty,
@@ -397,9 +567,9 @@ io.on('connection', (socket) => {
             startTime: Date.now()
         };
 
-        activeSessions.set(roomCode, session);
+        activeSessions.set(cleanRoomCode, session);
 
-        io.to(roomCode).emit('gameStarting', { start, target, difficulty });
+        io.to(cleanRoomCode).emit('gameStarting', { start, target, difficulty });
     });
 
     socket.on('disconnect', () => {
@@ -479,7 +649,11 @@ async function fetchRandomArticle(difficulty) {
 
 app.get('/api/random/:difficulty', async (req, res) => {
     try {
-        const { difficulty } = req.params;
+        const difficulty = validateDifficulty(req.params.difficulty);
+        if (!difficulty) {
+            return res.status(400).json({ error: 'Invalid difficulty. Must be easy, medium, or hard.' });
+        }
+        
         const title = await fetchRandomArticle(difficulty);
         res.json({ title });
     } catch (error) {
@@ -490,7 +664,13 @@ app.get('/api/random/:difficulty', async (req, res) => {
 
 app.get('/api/article/:title', async (req, res) => {
     try {
-        const title = decodeURIComponent(req.params.title);
+        let title = decodeURIComponent(req.params.title);
+        
+        // Sanitize title - limit length and remove dangerous characters
+        if (title.length > 500) {
+            return res.status(400).json({ error: 'Article title too long' });
+        }
+        
         const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`;
         
         const response = await fetch(wikiUrl, {
@@ -575,13 +755,28 @@ app.get('/api/article/:title', async (req, res) => {
     }
 });
 
-app.post('/api/leaderboard', async (req, res) => {
+app.post('/api/leaderboard', leaderboardLimiter, async (req, res) => {
     try {
         const { nickname, difficulty, clicks, time, path, usedHint } = req.body;
 
+        // Validate inputs
+        const cleanNickname = sanitizeUsername(nickname);
+        if (!cleanNickname) {
+            return res.status(400).json({ error: 'Invalid nickname. Use 1-20 alphanumeric characters only.' });
+        }
+        
+        const validDifficulty = validateDifficulty(difficulty);
+        if (!validDifficulty) {
+            return res.status(400).json({ error: 'Invalid difficulty. Must be easy, medium, or hard.' });
+        }
+        
+        const validClicks = typeof clicks === 'number' && clicks >= 0 && clicks <= 10000 ? clicks : 0;
+        const validTime = typeof time === 'number' && time >= 0 && time <= 86400000 ? time : 0;
+        const cleanPath = sanitizePath(path);
+
         const result = await pool.query(
             'INSERT INTO leaderboard (nickname, difficulty, clicks, time, path, used_hint) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-            [nickname, difficulty, clicks, time, JSON.stringify(path), usedHint || false]
+            [cleanNickname, validDifficulty, validClicks, validTime, JSON.stringify(cleanPath), Boolean(usedHint)]
         );
 
         res.json({ success: true, id: result.rows[0].id });
@@ -593,10 +788,14 @@ app.post('/api/leaderboard', async (req, res) => {
 
 app.get('/api/leaderboard/:difficulty', async (req, res) => {
     try {
-        const { difficulty } = req.params;
+        const difficulty = validateDifficulty(req.params.difficulty);
+        if (!difficulty) {
+            return res.status(400).json({ error: 'Invalid difficulty. Must be easy, medium, or hard.' });
+        }
+        
         const { sortBy = 'clicks' } = req.query;
-
-        const orderBy = sortBy === 'time' ? 'time ASC, clicks ASC' : 'clicks ASC, time ASC';
+        const validSortBy = ['clicks', 'time'].includes(sortBy) ? sortBy : 'clicks';
+        const orderBy = validSortBy === 'time' ? 'time ASC, clicks ASC' : 'clicks ASC, time ASC';
 
         const result = await pool.query(
             `SELECT nickname, clicks, time, path, used_hint, created_at 
