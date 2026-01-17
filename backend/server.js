@@ -14,7 +14,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: "*",
+        origin: process.env.FRONTEND_URL || "*",
         methods: ["GET", "POST"]
     }
 });
@@ -29,7 +29,9 @@ const pool = new Pool({
     port: parseInt(process.env.DB_PORT || '5432'),
 });
 
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL || "*"
+}));
 app.use(express.json());
 
 const API_BASE = 'https://en.wikipedia.org/w/api.php';
