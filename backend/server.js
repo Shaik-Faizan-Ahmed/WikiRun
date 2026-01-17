@@ -201,6 +201,11 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('leaveGameSession', ({ roomCode }) => {
+        console.log(`🔴 SERVER: Player leaving game session: game-${roomCode}`);
+        socket.leave(`game-${roomCode}`);
+    });
+
     socket.on('playerProgress', ({ roomCode, username, clicks, currentArticle }) => {
         const session = activeSessions.get(roomCode);
         if (!session) return;
@@ -350,7 +355,10 @@ io.on('connection', (socket) => {
         const leaderboard = Array.from(room.leaderboard.values());
         const matches = room.matchHistory.map(match => ({
             timestamp: match.timestamp,
-            target: match.results[0]?.target || 'Unknown',
+            target: match.target,
+            difficulty: match.difficulty,
+            playerCount: match.playerCount,
+            abandoned: match.abandoned,
             results: match.results.sort((a, b) => a.position - b.position)
         }));
         
@@ -433,8 +441,10 @@ async function recordMatchResults(roomCode, session) {
 
     room.matchHistory.push({
         timestamp: Date.now(),
-        playerCount: totalPlayers,
+        playerCount: session.players.length,
         target: session.target,
+        difficulty: session.difficulty,
+        abandoned: finishedPlayers.length === 0,
         results: finishedPlayers.map(p => ({
             username: p.username,
             position: p.position,

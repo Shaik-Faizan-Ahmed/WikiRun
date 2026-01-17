@@ -1,21 +1,24 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Lato', 'Helvetica', 'Arial', sans-serif;
+    background: #f6f6f6;
     min-height: 100vh;
     padding: 20px;
 }
 
 .container {
     width: 100%;
-    max-width: 700px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .logo-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
+    padding: 20px 0;
+    background: #fff;
+    border-bottom: 1px solid #a7d7f9;
 }
 
 .logo-header h1 {
@@ -39,10 +42,8 @@ body {
 
 .card {
     background: #ffffff;
-    border: 1px solid #a2a9b1;
-    border-radius: 2px;
+    border: 1px solid #a7d7f9;
     padding: 30px;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.04);
 }
 
 .header-section {
@@ -52,28 +53,30 @@ body {
     margin-bottom: 25px;
     flex-wrap: wrap;
     gap: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #a7d7f9;
 }
 
 .header-section h2 {
     margin: 0;
     color: #000;
     font-size: 1.8rem;
-    font-weight: 500;
+    font-weight: 400;
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
 }
 
 .header-section h2 span {
     color: #0645ad;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .difficulty-badge {
     padding: 4px 12px;
-    border-radius: 2px;
     font-weight: 600;
     font-size: 0.85rem;
-    background: #eaecf0;
+    background: #f6f6f6;
     color: #202122;
-    border: 1px solid #a2a9b1;
+    border: 1px solid #c8ccd1;
     text-transform: uppercase;
 }
 
@@ -81,13 +84,13 @@ body {
     display: flex;
     gap: 0;
     margin-bottom: 20px;
-    border-bottom: 1px solid #a2a9b1;
+    border-bottom: 1px solid #a7d7f9;
     flex-wrap: wrap;
 }
 
 .tab-btn {
-    background: #f8f9fa;
-    border: 1px solid #a2a9b1;
+    background: #f6f6f6;
+    border: 1px solid #c8ccd1;
     border-bottom: none;
     padding: 10px 20px;
     font-size: 0.95rem;
@@ -118,8 +121,78 @@ body {
     display: block;
 }
 
-.leaderboard {
+/* Rankings Table Styles */
+.rankings-table {
     min-height: 200px;
+    overflow-x: auto;
+}
+
+.rankings-table-element {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.rankings-table-element thead {
+    background: #f6f6f6;
+    border-bottom: 2px solid #a7d7f9;
+}
+
+.rankings-table-element th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #202122;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 2px solid #a7d7f9;
+}
+
+.rankings-table-element tbody tr {
+    border-bottom: 1px solid #eaecf0;
+    transition: background 0.2s;
+}
+
+.rankings-table-element tbody tr:hover {
+    background: #f6f6f6;
+}
+
+.rankings-table-element td {
+    padding: 12px 15px;
+    color: #202122;
+    font-size: 0.95rem;
+}
+
+.rank-cell {
+    font-weight: 700;
+    color: #0645ad;
+    font-size: 1.1rem;
+    width: 80px;
+}
+
+.name-cell {
+    font-weight: 600;
+    color: #000;
+    min-width: 150px;
+}
+
+.medal-cell {
+    text-align: center;
+    font-weight: 600;
+    width: 120px;
+}
+
+.medal-cell .medal {
+    font-size: 1.2em;
+    margin-right: 5px;
+}
+
+.total-cell {
+    text-align: center;
+    font-weight: 600;
+    color: #54595d;
+    width: 100px;
 }
 
 .loading {
@@ -129,69 +202,15 @@ body {
     font-size: 1rem;
 }
 
-.leaderboard-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 12px 15px;
-    background: #f8f9fa;
-    border: 1px solid #eaecf0;
-    margin-bottom: 8px;
-    transition: background 0.2s;
-}
-
-.leaderboard-item:hover {
-    background: #eaecf0;
-}
-
-.leaderboard-rank {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #0645ad;
-    min-width: 40px;
-}
-
-.leaderboard-player {
-    flex: 1;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #202122;
-}
-
-.leaderboard-stats {
-    font-size: 0.9rem;
-    color: #54595d;
-}
-
-.podium-stats {
-    display: flex;
-    gap: 15px;
-}
-
-.podium-stat {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.podium-medal {
-    font-size: 1.2em;
-}
-
-.podium-count {
-    font-weight: 600;
-    color: #202122;
-    font-size: 1rem;
-}
-
+/* Match History Styles */
 .match-history {
     min-height: 200px;
 }
 
 .match-item {
     padding: 15px;
-    background: #f8f9fa;
-    border: 1px solid #eaecf0;
+    background: #f6f6f6;
+    border: 1px solid #c8ccd1;
     margin-bottom: 12px;
 }
 
@@ -203,12 +222,24 @@ body {
     flex-wrap: wrap;
     gap: 10px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #eaecf0;
+    border-bottom: 1px solid #c8ccd1;
 }
 
-.match-date {
-    color: #54595d;
-    font-size: 0.85rem;
+.match-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.match-number {
+    font-weight: 700;
+    color: #0645ad;
+    font-size: 1rem;
+}
+
+.match-timestamp {
+    color: #72777d;
+    font-size: 0.8rem;
 }
 
 .match-target {
@@ -217,39 +248,82 @@ body {
     font-size: 0.95rem;
 }
 
+.match-difficulty {
+    padding: 2px 8px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    background: #fff;
+    color: #202122;
+    border: 1px solid #c8ccd1;
+}
+
+.match-players-count {
+    color: #54595d;
+    font-size: 0.85rem;
+}
+
 .match-results {
     display: grid;
-    gap: 6px;
+    gap: 8px;
 }
 
 .match-result-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 10px;
+    padding: 10px 12px;
     background: white;
-    border: 1px solid #eaecf0;
+    border: 1px solid #c8ccd1;
 }
 
 .match-position {
-    font-weight: 600;
-    color: #0645ad;
-    min-width: 35px;
-    font-size: 0.9rem;
+    font-weight: 700;
+    color: #202122;
+    min-width: 70px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.position-medal {
+    font-size: 1.3em;
 }
 
 .match-player {
     flex: 1;
     padding: 0 12px;
-    font-weight: 500;
-    color: #202122;
+    font-weight: 600;
+    color: #000;
+    font-size: 0.95rem;
 }
 
 .match-stats {
     display: flex;
-    gap: 12px;
-    font-size: 0.85rem;
+    gap: 15px;
+    font-size: 0.9rem;
     color: #54595d;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-item strong {
+    color: #202122;
+    font-weight: 600;
+}
+
+.match-abandoned {
+    text-align: center;
+    padding: 15px;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #d33;
+    background: #fee;
+    border: 1px solid #d33;
 }
 
 .button-group {
@@ -260,23 +334,27 @@ body {
 }
 
 .primary-btn {
-    background: #f8f9fa;
-    color: #202122;
-    border: 1px solid #a2a9b1;
+    background: #3366cc;
+    color: white;
+    border: 1px solid #3366cc;
     padding: 12px 24px;
     font-size: 1rem;
     font-weight: 500;
-    border-radius: 2px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
     font-family: inherit;
 }
 
 .primary-btn:hover {
-    background: #eaecf0;
+    background: #2952a3;
+    border-color: #2952a3;
 }
 
 @media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+    }
+
     .logo-header h1 {
         font-size: 32px;
     }
@@ -293,6 +371,11 @@ body {
         padding: 20px;
     }
 
+    .header-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .header-section h2 {
         font-size: 1.4rem;
     }
@@ -303,7 +386,7 @@ body {
     }
 
     .tab-btn {
-        border-bottom: 1px solid #a2a9b1;
+        border-bottom: 1px solid #c8ccd1;
         margin-right: 0;
     }
 
@@ -311,8 +394,28 @@ body {
         border-bottom: none;
     }
 
-    .podium-stats {
-        gap: 10px;
+    .rankings-table-element {
+        font-size: 0.85rem;
+    }
+
+    .rankings-table-element th,
+    .rankings-table-element td {
+        padding: 8px 10px;
+    }
+
+    .match-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .match-result-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .match-player {
+        padding: 0;
     }
 
     .match-stats {

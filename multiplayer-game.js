@@ -63,11 +63,9 @@ function connectWebSocket() {
     
     socket.on('roundEnded', () => {
         console.log('🔴 ROUND ENDED EVENT RECEIVED');
-        console.log('🔴 About to redirect to lobby');
-        console.log('🔴 roomCode:', roomCode);
-        console.log('🔴 username:', username);
         gameActive = false;
         stopTimer();
+        socket.emit('leaveGameSession', { roomCode });
         alert('Host ended the round. Returning to lobby...');
         setTimeout(() => {
             window.location.href = `multiplayer-room.html?roomCode=${roomCode}&username=${encodeURIComponent(username)}`;
@@ -261,6 +259,8 @@ async function finishGame() {
         usedHint
     });
     
+    socket.emit('leaveGameSession', { roomCode });
+    
     setTimeout(() => {
         window.location.href = `multiplayer-results.html?roomCode=${roomCode}&username=${encodeURIComponent(username)}`;
     }, 1000);
@@ -269,6 +269,8 @@ async function finishGame() {
 function endGame(forfeit = false) {
     gameActive = false;
     stopTimer();
+    
+    socket.emit('leaveGameSession', { roomCode });
     
     if (forfeit) {
         alert('Game has ended. Moving to results...');
@@ -303,14 +305,34 @@ document.getElementById('cancelQuit').addEventListener('click', () => {
 
 document.getElementById('confirmQuit').addEventListener('click', () => {
     socket.emit('playerQuit', { roomCode, username });
+    socket.emit('leaveGameSession', { roomCode });
     window.location.href = `multiplayer-room.html?roomCode=${roomCode}&username=${encodeURIComponent(username)}`;
 });
 
 document.getElementById('endRoundBtn').addEventListener('click', () => {
     if (confirm('Are you sure you want to end this round? All players will return to the lobby.')) {
         socket.emit('endRound', { roomCode, username });
+        socket.emit('leaveGameSession', { roomCode });
         window.location.href = `multiplayer-room.html?roomCode=${roomCode}&username=${encodeURIComponent(username)}`;
     }
+});
+
+document.getElementById('toggleStandings').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const standingsList = document.getElementById('standingsList');
+    const toggleBtn = document.getElementById('toggleStandings');
+    
+    if (standingsList.style.display === 'none') {
+        standingsList.style.display = 'flex';
+        toggleBtn.classList.add('expanded');
+    } else {
+        standingsList.style.display = 'none';
+        toggleBtn.classList.remove('expanded');
+    }
+});
+
+document.getElementById('standingsHeader').addEventListener('click', () => {
+    document.getElementById('toggleStandings').click();
 });
 
 init();

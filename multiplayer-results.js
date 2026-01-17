@@ -210,13 +210,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
-document.getElementById('playAgainBtn').addEventListener('click', () => {
-    socket.emit('playAgain', { roomCode, username });
-    socket.on('gameStarting', (data) => {
-        window.location.href = `multiplayer-game.html?roomCode=${roomCode}&username=${encodeURIComponent(username)}&start=${encodeURIComponent(data.start)}&target=${encodeURIComponent(data.target)}&difficulty=${data.difficulty}`;
-    });
-});
-
 document.getElementById('backToLobbyBtn').addEventListener('click', () => {
     window.location.href = `multiplayer-room.html?roomCode=${roomCode}&username=${encodeURIComponent(username)}`;
 });
